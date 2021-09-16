@@ -1,0 +1,88 @@
+This is the C++ code for reconstructing dark matter density fields constructed from GADGET code
+and then compute the power spectra of pre-rec, post-rec and their cross spectra in redshift space.
+
+Belos is the explanation of each file:
+
+1. run.sh 
+
+This is the shell script to compile the program "run_pk.cpp" and "pk_recon.cpp" and run it
+You can set the realization number
+
+After setting three arguments for the following program "run_pk.cpp", please type
+sh run.sh
+
+2. run_pk.cpp
+
+This is the program to do parallel computing of the program "pk_recon" 
+in 4 different conditions, that is the snapshot 1 (z=1.02) and 3 (z=0) with and w/o reconstruction, 
+with multiple realizations set by nrun.
+
+Three arguments are required:
+ argv[1]: gadget output directory above 'run00???/snapdir_???/snapshot_??' 
+ argv[2]: output directory of (reconstructed power spectra) (default is set to be output/)
+ argv[3]: number of realizations
+
+Number of threads for the parallel computing can be set by "nthreads" in the program (nthreads is now set to be 8)
+In the current setup, 4GB+ memory will be required in each thread.
+
+3. pk_recon.cpp
+
+This is c++ program that computes the reconstructed matter power spectrum
+where the matter distribution is obtained as the output of Gadget.
+
+In this code, we use FFTW3 library "libfftw3.a".
+Please specify the directoy FFTWDIR in Makefile first. 
+
+After that, type "make pk_recon" to compile the program
+and you can run the program a
+
+For the box with a side length of 500Mpc/h with 512^3 particles and 512^3 pixel
+./pk_recon -l500 -p512 -idirectory_gadgetoutput/snapdir_003/snapshot_003 -opk.dat -fy -r10 -n512 -s48 -z0.0 -tz
+
+For the box with a side length of 4Gpc/h with 4096^3 particles and 2048^3 pixel
+./pk_recon -l4000 -p2048 -idirectory_gadgetoutput/snapdir_003/snapshot_003 -opk.dat -fy -r10 -n4096 -s2560 -z0.0 -tz
+
+Meaning of each option name is written as follows:
+
+-l : side length of simulation box in unit of Mpc/h (e.g, 500)
+
+-p : pixel number at a side length (e.g., 512)
+
+-i : filename of Gadget snapshot (e.g., directory_gadgetoutput/snapdir_004/snapshot_004)
+
+-o : filename of output power spectrum (e.g., pk.dat)
+
+-f : reconstruct field or not (y or n)
+
+-r : smoothing scale for reconstruction in unit of Mpc/h (e.g., 10.)
+	if you do not reconstruct, please remove -r option or input some arbitrary number (e.g,, 0.)
+
+-n : number of particles at a side (e.g., 512), 
+	which means that the total number of particles is 512^3
+
+-s : total number of snapshots of Gadget output (e.g, 48)
+
+-z : redshift of the input gadget snapshot (e.g., 0., redshift is used to divide velocity data in Gadget by aH(z))
+
+-t : real space (r) or redshift space (z)
+
+-T : type of reconstruction in redshift space: symmetric (sym) or isotropic (iso), if not specified, symmetric reconstruction is adopted
+
+-g : value of growth rate, which is needed in isotorpic reconstruction
+
+-S : set the number of subboxes at a side length when the original box is divided into smaller subboxes to see the SSC effect, if not specified number is 1
+
+-F : artifical boost factor of growth rate to amplify the line-of-sight velocity, if not specified, fz_boost=1
+
+-c : calculate cross spectrum between post-rec and pre-rec spectrum (defalut is "y")
+
+The output file contains
+
+1st col: k
+2nd-4th cols: post-P_l(k) with l=0, 2, 4
+5th-7th cols: pre-P_l(k) with l=0, 2, 4
+
+
+References:
+ C. Hikage, R. Takahashi, K. Koyama, Phys. Rev. D 102 (2020) 083514
+ C. Hikage, K. Koyama, R. Takahashi, Phys. Rev. D 101 (2020) 043510
