@@ -21,6 +21,6 @@
 Chiaki Hikage, Kazuya Koyama, Alan Heavens  
 Phys. Rev. D, Vol. 96 (2017) id.043513
 
-Perturbation theory for the redshift-space matter power spectra after reconstruction  
+- Perturbation theory for the redshift-space matter power spectra after reconstruction  
 Chiaki Hikage, Kazuya Koyama, Ryuichi Takahashi  
 Phys. Rev. D, Vol. 101, Issue 4 (2020), id.043510
